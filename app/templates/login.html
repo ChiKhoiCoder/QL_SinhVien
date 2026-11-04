@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng nhập | Student Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-page">
+  <div class="login-shell">
+    <section class="login-brand-panel">
+      <a href="#" class="brand login-brand"><span class="brand-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2.5 8.2 9.5-5 9.5 5-9.5 5-9.5-5Z"/><path d="M6.5 10.4v5.1c3.4 3.1 7.6 3.1 11 0v-5.1M21.5 8.5v6"/></svg></span><span><b>STUDENT MANAGEMENT</b><small>Hệ thống quản lý sinh viên</small></span></a>
+      <div class="login-illustration"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="illustration-card card-back">✦</div><div class="illustration-card card-front"><span class="illus-cap">⌂</span><b>Học tập<br>thành công</b><small>Quản lý tốt · Thành quả tốt</small></div><span class="float-dot dot-one"></span><span class="float-dot dot-two"></span><span class="float-dot dot-three"></span></div>
+      <div class="brand-copy"><span class="eyebrow">MỘT NỀN TẢNG — MỌI THÔNG TIN</span><h1>Quản lý giáo dục<br><span>thật đơn giản.</span></h1><p>Theo dõi sinh viên, lớp học và kết quả học tập trong cùng một nơi.</p></div>
+      <div class="login-footer">© 2026 Student Management <span>•</span> Hệ thống nội bộ</div>
+    </section>
+    <section class="login-form-panel"><div class="login-form-wrap"><div class="welcome-mark">✦</div><div class="eyebrow">CHÀO MỪNG TRỞ LẠI</div><h2>Đăng nhập</h2><p class="login-subtitle">Nhập tài khoản để tiếp tục vào hệ thống.</p>
+      {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+      <form method="post" class="login-form"><label for="username">Tên đăng nhập</label><div class="login-input"><span>♙</span><input id="username" name="username" autocomplete="username" placeholder="Nhập tên đăng nhập" required autofocus></div><div class="password-label"><label for="password">Mật khẩu</label><span>Bảo mật tài khoản</span></div><div class="login-input"><span>▣</span><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu" required><button type="button" class="toggle-password" onclick="const p=document.getElementById('password');p.type=p.type==='password'?'text':'password'">Hiện</button></div><button class="button primary login-submit" type="submit">Đăng nhập <span>→</span></button></form>
+      <div class="login-help"><span class="help-icon">i</span><span>Tài khoản ban đầu: <b>admin</b> &nbsp;·&nbsp; Mật khẩu: <b>admin123</b></span></div><div class="login-security">♧ &nbsp; Kết nối cục bộ được bảo vệ</div>
+    </div></section>
+  </div>
+</body>
+</html>

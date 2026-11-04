@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">TRUNG TÂM HỖ TRỢ</div><h1>Tiếp nhận sự cố</h1><p>Gửi lỗi hoặc yêu cầu hỗ trợ và theo dõi tiến độ xử lý ngay trong hệ thống.</p></div><a class="button primary" href="#report-ticket">＋ Báo sự cố</a></div>
+<div class="support-stats">
+  <article class="support-stat"><i class="blue">✉</i><span>MỚI TIẾP NHẬN</span><b>{{ counts.get('Mới tiếp nhận',0) }}</b></article>
+  <article class="support-stat"><i class="orange">◷</i><span>ĐANG XỬ LÝ</span><b>{{ counts.get('Đang xử lý',0) }}</b></article>
+  <article class="support-stat"><i class="violet">↗</i><span>CHỜ PHẢN HỒI</span><b>{{ counts.get('Chờ phản hồi',0) }}</b></article>
+  <article class="support-stat"><i class="green">✓</i><span>ĐÃ GIẢI QUYẾT</span><b>{{ counts.get('Đã giải quyết',0) }}</b></article>
+</div>
+<div class="support-layout">
+  <section class="panel support-list-panel"><div class="panel-heading"><div><h2>Danh sách sự cố</h2><p>Tra cứu và cập nhật tiến độ các yêu cầu hỗ trợ.</p></div><span class="support-total">{{ tickets|length }} yêu cầu</span></div>
+    {% if tickets %}<div class="support-ticket-list">{% for ticket in tickets %}
+      <article class="support-ticket"><div class="ticket-top"><div class="ticket-title-wrap"><span class="ticket-category-icon">{% if ticket.category == 'Lỗi chức năng' %}⚠{% elif ticket.category == 'Tài khoản' %}♙{% elif ticket.category == 'Dữ liệu' %}▤{% else %}⌁{% endif %}</span><div><h3>{{ ticket.title }}</h3><p>#{{ '%04d'|format(ticket.id) }} · {{ ticket.category }} · {{ ticket.reporter_name }} · {{ ticket.created_at }}</p></div></div><span class="ticket-priority priority-{{ ticket.priority|lower|replace(' ','-') }}">{{ ticket.priority }}</span></div>
+        <p class="ticket-description">{{ ticket.description }}</p>
+        {% if ticket.resolution_note %}<div class="resolution-note"><b>Phản hồi xử lý</b><p>{{ ticket.resolution_note }}</p></div>{% endif %}
+        <div class="ticket-bottom"><span class="ticket-status status-{{ ticket.status|lower|replace(' ','-') }}">{{ ticket.status }}</span><span class="ticket-updated">Cập nhật {{ ticket.updated_at }}</span></div>
+        {% if is_admin %}<form method="post" class="ticket-admin-form"><input type="hidden" name="action" value="update"><input type="hidden" name="ticket_id" value="{{ ticket.id }}"><label><span>Trạng thái</span><select name="status">{% for status in ['Mới tiếp nhận','Đang xử lý','Chờ phản hồi','Đã giải quyết'] %}<option {% if ticket.status==status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select></label><label class="resolution-field"><span>Ghi chú phản hồi</span><input name="resolution_note" value="{{ ticket.resolution_note }}" placeholder="Cách khắc phục hoặc thông tin cần bổ sung"></label><button class="button subtle" type="submit">Cập nhật</button></form>{% endif %}
+      </article>
+    {% endfor %}</div>{% else %}<div class="support-empty"><span>✓</span><b>Chưa có sự cố nào</b><p>Khi gặp vấn đề, hãy gửi báo cáo để bộ phận quản trị tiếp nhận.</p></div>{% endif %}
+  </section>
+  <aside class="panel report-ticket-panel" id="report-ticket"><div class="panel-heading"><div><h2>Gửi yêu cầu hỗ trợ</h2><p>Mô tả ngắn gọn để xử lý nhanh hơn.</p></div></div>
+    <form method="post" class="support-form"><input type="hidden" name="action" value="create"><label class="field"><span>Tiêu đề sự cố <em>*</em></span><input name="title" maxlength="140" placeholder="Ví dụ: Không lưu được điểm sinh viên" required></label><div class="support-form-row"><label class="field"><span>Phân loại</span><select name="category"><option>Lỗi chức năng</option><option>Tài khoản</option><option>Dữ liệu</option><option>Khác</option></select></label><label class="field"><span>Mức độ ưu tiên</span><select name="priority"><option>Thấp</option><option selected>Trung bình</option><option>Cao</option><option>Khẩn cấp</option></select></label></div><label class="field"><span>Mô tả chi tiết <em>*</em></span><textarea name="description" rows="6" maxlength="3000" placeholder="Các bước gặp lỗi, màn hình liên quan và kết quả mong muốn…" required></textarea><small class="field-hint">Không gửi mật khẩu hoặc thông tin nhạy cảm trong nội dung báo cáo.</small></label><button class="button primary support-submit" type="submit">Gửi sự cố <span>→</span></button></form>
+  </aside>
+</div>
+{% endblock %}

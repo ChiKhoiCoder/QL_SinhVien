@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">TÙY CHỈNH HỆ THỐNG</div><h1>Cài đặt</h1><p>Cấu hình hệ thống, giao diện và thông tin tài khoản quản trị.</p></div><span class="settings-state"><i></i> Lưu cấu hình vào SQLite</span></div>
+<div class="settings-layout">
+  <aside class="settings-nav">
+    <a class="settings-nav-item" href="#general"><span class="settings-nav-icon blue">⚙</span><span><b>Cài đặt chung</b><small>Thông tin và tùy chọn hệ thống</small></span></a>
+    <a class="settings-nav-item" href="#appearance"><span class="settings-nav-icon orange">◐</span><span><b>Giao diện</b><small>Màu sắc và cách hiển thị</small></span></a>
+    <a class="settings-nav-item" href="#account"><span class="settings-nav-icon violet">♙</span><span><b>Tài khoản</b><small>Tên hiển thị và mật khẩu</small></span></a>
+    <a class="settings-nav-item" href="#data"><span class="settings-nav-icon green">▤</span><span><b>Dữ liệu</b><small>SQLite và xuất báo cáo</small></span></a>
+  </aside>
+  <div class="settings-content">
+    <section class="panel settings-panel" id="general">
+      <div class="settings-panel-head"><span class="settings-icon blue">⚙</span><div><h2>Cài đặt chung</h2><p>Tên hệ thống, năm học, học kỳ và hành vi danh sách.</p></div></div>
+      <form method="post" action="{{ url_for('save_general_settings') }}" class="settings-form">
+        <div class="field"><label>Tên hệ thống / trường học</label><input name="institution_name" value="{{ settings.institution_name }}" maxlength="100" required></div>
+        <div class="field"><label>Năm học hiện tại</label><input name="academic_year" value="{{ settings.academic_year }}" placeholder="2026–2027"></div>
+        <div class="field"><label>Học kỳ mặc định</label><select name="default_semester">{% for sem in ['Học kỳ 1','Học kỳ 2','Học kỳ hè'] %}<option {% if settings.default_semester == sem %}selected{% endif %}>{{ sem }}</option>{% endfor %}</select></div>
+        <div class="field"><label>Số dòng mỗi trang</label><select name="items_per_page">{% for n in ['10','20','50','100'] %}<option value="{{ n }}" {% if settings.items_per_page == n %}selected{% endif %}>{{ n }} dòng</option>{% endfor %}</select></div>
+        <label class="toggle-setting"><span><b>Cho phép xuất danh sách CSV</b><small>Hiện nút xuất dữ liệu ở trang sinh viên và báo cáo.</small></span><input type="checkbox" name="allow_csv_export" value="1" {% if settings.allow_csv_export == '1' %}checked{% endif %}><i></i></label>
+        <div class="settings-actions"><button class="button primary">Lưu cài đặt chung</button></div>
+      </form>
+    </section>
+    <section class="panel settings-panel" id="appearance">
+      <div class="settings-panel-head"><span class="settings-icon orange">◐</span><div><h2>Tùy chỉnh giao diện</h2><p>Chọn giao diện phù hợp và xem thay đổi áp dụng cho toàn bộ trang.</p></div></div>
+      <form method="post" action="{{ url_for('save_general_settings') }}" class="settings-form appearance-form">
+        <input type="hidden" name="institution_name" value="{{ settings.institution_name }}"><input type="hidden" name="academic_year" value="{{ settings.academic_year }}"><input type="hidden" name="default_semester" value="{{ settings.default_semester }}"><input type="hidden" name="items_per_page" value="{{ settings.items_per_page }}"><input type="hidden" name="allow_csv_export" value="{{ settings.allow_csv_export }}">
+        <div class="field"><label>Chế độ hiển thị</label><select name="theme"><option value="light" {% if settings.theme == 'light' %}selected{% endif %}>Sáng — nền trắng</option><option value="dark" {% if settings.theme == 'dark' %}selected{% endif %}>Tối — nền than chì</option></select></div>
+        <div class="field"><label>Cỡ chữ</label><select name="font_scale">{% for size,label in [('small','Nhỏ gọn'),('normal','Tiêu chuẩn'),('large','Lớn, dễ đọc')] %}<option value="{{ size }}" {% if settings.font_scale == size %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+        <div class="field full"><label>Màu nhấn chính</label><div class="color-options">{% for color,label in [('blue','Xanh dương'),('green','Xanh lá'),('violet','Tím'),('orange','Cam'),('rose','Hồng')] %}<label class="color-choice"><input type="radio" name="accent_color" value="{{ color }}" {% if settings.accent_color == color %}checked{% endif %}><span class="swatch {{ color }}"></span><span>{{ label }}</span></label>{% endfor %}</div></div>
+        <label class="toggle-setting"><span><b>Bảng dữ liệu gọn</b><small>Giảm chiều cao dòng để xem nhiều mục hơn.</small></span><input type="checkbox" name="compact_tables" value="1" {% if settings.compact_tables == '1' %}checked{% endif %}><i></i></label>
+        <label class="toggle-setting"><span><b>Hiện banner chào mừng</b><small>Bật hoặc ẩn banner lớn ở trang tổng quan.</small></span><input type="checkbox" name="show_dashboard_banner" value="1" {% if settings.show_dashboard_banner == '1' %}checked{% endif %}><i></i></label>
+        <div class="settings-actions"><button class="button primary">Áp dụng giao diện</button></div>
+      </form>
+    </section>
+    <section class="panel settings-panel" id="account">
+      <div class="settings-panel-head"><span class="settings-icon violet">♙</span><div><h2>Tài khoản quản trị</h2><p>Đổi tên hiển thị hoặc mật khẩu đăng nhập.</p></div></div>
+      <form method="post" action="{{ url_for('save_account_settings') }}" class="settings-form">
+        <div class="field"><label>Tên hiển thị</label><input name="display_name" value="{{ display_name }}" maxlength="80" required></div>
+        <div class="field"><label>Tên đăng nhập</label><input value="{{ session.get('username','admin') }}" disabled><small class="field-hint">Tên đăng nhập hiện chưa thể thay đổi.</small></div>
+        <div class="settings-section-label">Đổi mật khẩu <span>Để trống nếu không muốn thay đổi</span></div>
+        <div class="field"><label>Mật khẩu hiện tại</label><input name="current_password" type="password" autocomplete="current-password"></div>
+        <div class="field"><label>Mật khẩu mới</label><input name="new_password" type="password" minlength="8" autocomplete="new-password"></div>
+        <div class="field"><label>Xác nhận mật khẩu mới</label><input name="confirm_password" type="password" autocomplete="new-password"></div>
+        <div class="settings-actions"><button class="button primary">Cập nhật tài khoản</button></div>
+      </form>
+    </section>
+    <section class="panel settings-panel" id="data">
+      <div class="settings-panel-head"><span class="settings-icon green">▤</span><div><h2>Dữ liệu & xuất báo cáo</h2><p>Thông tin lưu trữ cục bộ và tải danh sách.</p></div></div>
+      <div class="data-info"><div><span>Loại cơ sở dữ liệu</span><b>SQLite · Lưu trữ cục bộ</b></div><div><span>Tệp dữ liệu</span><b>data/student_management.db</b></div><div><span>Xuất danh sách</span><a class="button export" href="{{ url_for('export_students') }}">⇩ Xuất CSV UTF-8</a></div></div>
+    </section>
+  </div>
+</div>
+{% endblock %}

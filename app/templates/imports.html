@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-heading"><div><div class="eyebrow">NHẬP DỮ LIỆU HÀNG LOẠT</div><h1>Nhập {{ spec.title|lower }} từ tệp</h1><p>Tải dữ liệu hiện có từ Excel hoặc CSV vào hệ thống, không cần nhập từng dòng.</p></div><a class="button subtle" href="{{ url_for({'students':'students','classes':'classes','subjects':'subjects','grades':'grades','attendance':'attendance'}[entity]) }}">← Quay lại danh sách</a></div>
+<div class="import-layout">
+  <section class="panel import-main">
+    <div class="import-step-head"><span class="step-number">01</span><div><h2>Chọn tệp dữ liệu</h2><p>Hỗ trợ Excel (.xlsx) và CSV UTF-8. Tối đa 10.000 dòng, 8 MB.</p></div></div>
+    <a class="template-download" href="{{ url_for('import_template',entity=entity) }}"><span class="template-icon">⇩</span><span><b>Tải tệp mẫu {{ spec.title|lower }}</b><small>Đúng tên cột và định dạng cho phân hệ này</small></span><span class="file-type">XLSX</span></a>
+    <form method="post" enctype="multipart/form-data" class="upload-form">
+      <label class="upload-zone" for="import-file"><span class="upload-icon">↑</span><b id="file-name">Chọn tệp hoặc kéo thả vào đây</b><small>Excel hoặc CSV · Tối đa 8 MB</small><input id="import-file" type="file" name="file" accept=".xlsx,.xlsm,.csv" required></label>
+      <button class="button primary upload-submit" type="submit" name="action" value="preview">Tải lên và xem trước <span>→</span></button>
+    </form>
+    {% if preview %}
+    <div class="import-step-head preview-head"><span class="step-number green-step">02</span><div><h2>Kiểm tra dữ liệu trước khi nhập</h2><p>Chỉ dòng hợp lệ được thêm. Dòng trùng/sai sẽ được bỏ qua và ghi rõ lý do.</p></div></div>
+    <div class="import-summary"><span class="summary-good"><b>✓ {{ preview.valid }}</b> dòng hợp lệ</span><span class="summary-bad"><b>! {{ preview.invalid }}</b> dòng cần kiểm tra</span><span class="summary-total">{{ preview.rows|length }} dòng dữ liệu</span></div>
+    <div class="table-wrap preview-table-wrap"><table><thead><tr><th>DÒNG</th>{% for label in spec.labels %}<th>{{ label|upper }}</th>{% endfor %}<th>KẾT QUẢ KIỂM TRA</th></tr></thead><tbody>{% for row in preview.rows[:100] %}<tr class="{{ 'invalid-row' if row.error else '' }}"><td>{{ row.row_number }}</td>{% for key in spec.headers %}<td>{{ row.payload.get(key,'') or '—' }}</td>{% endfor %}<td>{% if row.error %}<span class="import-error">{{ row.error }}</span>{% else %}<span class="import-valid">Sẵn sàng nhập</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+    {% if preview.rows|length > 100 %}<p class="preview-limit">Đang hiển thị 100 dòng đầu; tất cả {{ preview.rows|length }} dòng vẫn được kiểm tra khi xác nhận.</p>{% endif %}
+    <form method="post" class="import-confirm"><input type="hidden" name="action" value="apply"><input type="hidden" name="batch_id" value="{{ preview.id }}"><button class="button subtle" type="button" onclick="location.href='{{ url_for('imports',entity=entity) }}'">Hủy bản xem trước</button><button class="button primary" {% if preview.valid == 0 %}disabled{% endif %}>Xác nhận nhập {{ preview.valid }} dòng hợp lệ</button></form>
+    {% endif %}
+  </section>
+  <aside class="import-aside"><section class="panel import-help"><div class="help-heading"><span class="help-icon blue-help">✓</span><h3>Cách chuẩn bị tệp</h3></div><ol><li>Tải mẫu Excel của phân hệ này.</li><li>Giữ nguyên hàng tiêu đề màu xanh.</li><li>Điền dữ liệu, mỗi sinh viên/môn/lượt học một dòng.</li><li>Ngày dùng định dạng <code>YYYY-MM-DD</code>.</li><li>Tải tệp lên, xem lỗi rồi xác nhận nhập.</li></ol></section><section class="import-note"><span>i</span><div><b>Không ghi đè dữ liệu</b><p>Mã bị trùng hoặc tham chiếu không tồn tại sẽ được báo lỗi và bỏ qua. Tải lại tệp đã sửa để nhập các dòng đó.</p></div></section><div class="import-col-list"><b>CỘT BẮT BUỘC</b><p>{% for label in spec.labels %}<span>{{ label }}</span>{% endfor %}</p></div></aside>
+</div>
+<script>document.getElementById('import-file')?.addEventListener('change',function(){if(this.files[0])document.getElementById('file-name').textContent=this.files[0].name});const zone=document.querySelector('.upload-zone');zone?.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragging')});zone?.addEventListener('dragleave',()=>zone.classList.remove('dragging'));zone?.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('dragging');const input=zone.querySelector('input');if(e.dataTransfer.files.length){input.files=e.dataTransfer.files;document.getElementById('file-name').textContent=input.files[0].name}});</script>
+{% endblock %}

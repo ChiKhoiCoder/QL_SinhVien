@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page }} | Student Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body style="--accent:{{ {'blue':'#4566ea','green':'#159b7a','violet':'#8b61ca','orange':'#e28b2f','rose':'#d05f91'}.get(settings.accent_color if settings is defined else 'blue','#4566ea') }}" class="app-body theme-{{ settings.theme if settings is defined else 'light' }} accent-{{ settings.accent_color if settings is defined else 'blue' }} font-{{ settings.font_scale if settings is defined else 'normal' }} {% if settings is defined and settings.compact_tables == '1' %}compact-tables{% endif %}">
+  <aside class="sidebar">
+    <a href="{{ url_for('dashboard') }}" class="brand"><span class="brand-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2.5 8.2 9.5-5 9.5 5-9.5 5-9.5-5Z"/><path d="M6.5 10.4v5.1c3.4 3.1 7.6 3.1 11 0v-5.1M21.5 8.5v6"/></svg></span><span><b>{{ settings.institution_name if settings is defined else 'STUDENT MANAGEMENT' }}</b><small>Hệ thống quản lý sinh viên</small></span></a>
+    <div class="side-divider"></div>
+    <nav>
+      {% for endpoint, label, icon in [('dashboard','Tổng quan (Dashboard)','dashboard'),('students','Quản lý sinh viên','people'),('classes','Quản lý lớp học','school'),('subjects','Quản lý môn học','book'),('grades','Quản lý điểm','clipboard'),('attendance','Quản lý điểm danh','calendar'),('reports','Thống kê và báo cáo','chart'),('support','Tiếp nhận sự cố','support'),('settings','Cài đặt','settings')] %}
+      <a class="nav-link nav-{{ icon }} {% if request.endpoint == endpoint or (page.startswith('Nhập ') and entity is defined and endpoint == entity) or (endpoint == 'classes' and request.endpoint == 'class_detail') %}active{% endif %}" title="{{ label }}" href="{{ url_for(endpoint) }}"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true">{% if icon == 'dashboard' %}<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/>{% elif icon == 'people' %}<circle cx="9" cy="8" r="3"/><path d="M3 20v-1.5a6 6 0 0 1 12 0V20M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 4.5V20"/>{% elif icon == 'school' %}<path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6M8 10h.01M12 10h.01M16 10h.01M12 3v4"/><path d="M2 9h3M19 9h3"/>{% elif icon == 'book' %}<path d="M3 5.5A3.5 3.5 0 0 1 6.5 2H21v17H6.5A3.5 3.5 0 0 0 3 22V5.5Z"/><path d="M3 18.5A3.5 3.5 0 0 1 6.5 15H21M8 6h8M8 9h8"/>{% elif icon == 'clipboard' %}<rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4.5h6a1.5 1.5 0 0 0-3-1 1.5 1.5 0 0 0-3 1ZM8 11h8M8 15h8M8 19h5"/>{% elif icon == 'calendar' %}<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 15l2.5 2.5L16 13"/>{% elif icon == 'chart' %}<path d="M4 20h17M6 17V9h4v8M13 17V4h4v13M20 17v-6h2"/>{% elif icon == 'support' %}<path d="M4 13v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="12" width="4" height="7" rx="2"/><rect x="17" y="12" width="4" height="7" rx="2"/><path d="M17 19a5 5 0 0 1-5 3h-2"/>{% else %}<circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.5 2.6-1.8-.7-.2.1a8 8 0 0 1-1.5.9l-.2.1-.3 1.9h-3l-.3-1.9-.2-.1a8 8 0 0 1-1.5-.9l-.2-.1-1.8.7-1.5-2.6 1.4-1.1.1-.2a8 8 0 0 1 0-1.8l-.1-.2-1.4-1.1 1.5-2.6 1.8.7.2-.1a8 8 0 0 1 1.5-.9l.2-.1.3-1.9h3l.3 1.9.2.1a8 8 0 0 1 1.5.9l.2.1 1.8-.7 1.5 2.6-1.4 1.1-.1.2a8 8 0 0 1 0 1.8Z"/>{% endif %}</svg>{{ label }}</a>
+      {% endfor %}
+    </nav>
+    <div class="sidebar-user"><span class="avatar">{{ (session.get('display_name') or 'Q')[:1] }}</span><span><b>{{ session.get('display_name', 'Quản trị viên') }}</b><small>Quản trị hệ thống</small></span></div>
+    <form class="sidebar-logout" action="{{ url_for('logout') }}" method="post"><button type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>Đăng xuất</button></form>
+  </aside>
+  <main class="main-area">
+    <header class="topbar"><div class="crumb">Trang chủ <span>/</span> <b>{{ page }}</b></div><div class="system-state"><i></i> Hệ thống đang hoạt động</div></header>
+    <section class="page-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}<button onclick="this.parentElement.remove()">×</button></div>{% endfor %}</div>{% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </section>
+  </main>
+  <div class="modal-backdrop" id="modal-backdrop" onclick="if(event.target===this) closeModal()"><section class="modal"><div class="modal-head"><div><h2 id="modal-title">Thêm mới</h2><p>Nhập thông tin vào các trường bên dưới.</p></div><button class="close" onclick="closeModal()">×</button></div><div id="modal-body"></div></section></div>
+  <script>window.allowCsvExport={{ (settings.allow_csv_export == '1')|tojson if settings is defined else 'true' }};</script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
