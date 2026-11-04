@@ -2,7 +2,7 @@
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 # More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
 
-name: Build and deploy Python app to Azure Web App - webqlsinhvien
+name: Build and deploy Python app to Azure Web App - WebQLSinhVien
 
 on:
   push:
@@ -63,14 +63,14 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B11F5D91C9B846638C7C74D7D0DC8241 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4403F5B1ED044514BF0359ED4F9ADFC6 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3D4759283BC844F1A92B71DD0FCC6871 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1CCD35985653406080B8238E4EB7BE75 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D99FBD462CB34624A1F458818510E075 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_277BE051C501401CADC5CBB4D004B2C3 }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
-          app-name: 'webqlsinhvien'
+          app-name: 'WebQLSinhVien'
           slot-name: 'Production'
           
